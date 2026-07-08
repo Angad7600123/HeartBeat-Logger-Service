@@ -1,0 +1,40 @@
+# HeartBeat Logger configuration.
+# Copy to /etc/heartbeat-logger/config.toml and edit. All keys are optional;
+# omitted keys fall back to the defaults shown here.
+
+# --- storage ---------------------------------------------------------------
+db_path = "/var/lib/heartbeat-logger/hblog.db"
+
+# --- which units to watch --------------------------------------------------
+# watch_units: empty = watch every service seen. Entries may end with '*' to
+#   match a prefix, e.g. "myapp*".
+# exclude_units: always applied, even when watch_units is empty.
+watch_units = []
+exclude_units = [
+    "systemd-*",
+    "user@*",
+    "session-*",
+]
+
+# --- unit-state monitor ----------------------------------------------------
+poll_interval_sec = 15.0
+
+# --- write batching (fewer SD-card flushes) --------------------------------
+batch_size = 200
+flush_interval_sec = 5.0
+
+# --- problem detection -----------------------------------------------------
+# error_priority: syslog priority; a log at this severity or worse (lower
+#   number) is recorded as an error. 3 = err. Raise to 4 to also catch warnings.
+error_priority = 3
+restart_loop_threshold = 5      # this many restarts...
+restart_loop_window_sec = 120.0 # ...within this window => a restart_loop incident
+
+# --- retention (SD-card-wear aware) ----------------------------------------
+retention_days = 14.0           # raw events pruned after this
+incident_retention_days = 90.0  # incidents kept longer
+max_db_mb = 256.0               # hard cap; oldest events pruned first
+maintenance_interval_sec = 3600.0
+
+# --- daemon ----------------------------------------------------------------
+watchdog = true                 # answer the systemd WatchdogSec ping

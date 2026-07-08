@@ -1,0 +1,38 @@
+[Unit]
+Description=HeartBeat Logger — logging + health service for systemd services
+Documentation=file:/opt/heartbeat-logger/README.md
+After=network.target
+# Start early so we capture other services coming up.
+DefaultDependencies=yes
+
+[Service]
+Type=notify
+# READY=1 is sent by hblogd once it is up; WatchdogSec makes systemd restart the
+# logger if it stops answering (hblogd pings WATCHDOG=1 from its main loop).
+WatchdogSec=60
+ExecStart=/opt/heartbeat-logger/venv/bin/hblogd --config /etc/heartbeat-logger/config.toml
+Restart=always
+RestartSec=5
+
+# Run unprivileged; the journal is readable via the systemd-journal group.
+User=hblog
+Group=hblog
+SupplementaryGroups=systemd-journal
+
+# Persistent storage for the SQLite DB (creates /var/lib/heartbeat-logger).
+StateDirectory=heartbeat-logger
+StateDirectoryMode=0750
+
+# Hardening — this is a read-mostly observer, so lock it down.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/heartbeat-logger
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX
+MemoryMax=128M
+
+[Install]
+WantedBy=multi-user.target
