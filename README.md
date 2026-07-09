@@ -216,8 +216,8 @@ sudo mkdir -p /opt/heartbeat-logger
 sudo cp -r . /opt/heartbeat-logger
 cd /opt/heartbeat-logger
 
-# 3. A virtual environment that can see the apt-installed systemd binding
-python3 -m venv --system-site-packages venv
+# 3. venv that can see the apt-installed systemd binding
+sudo python3 -m venv --system-site-packages venv
 sudo ./venv/bin/pip install .
 
 # 4. Configuration
