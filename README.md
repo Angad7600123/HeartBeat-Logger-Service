@@ -231,14 +231,22 @@ sudo systemctl enable --now heartbeat-logger
 systemctl status heartbeat-logger
 ```
 
-Make the CLI convenient to run:
+**Make the CLI convenient to run.** The service locks its data directory down to
+the `hblog` user (`/var/lib/heartbeat-logger` is mode `0750`), so the database can
+only be read by `hblog` or `root`. The database is also in SQLite WAL mode, which
+requires write access to that directory even for a read-only query — so simply
+adding your login user to the `hblog` group is **not** enough. Run the CLI *as*
+the `hblog` user instead. The tidiest way is a shell alias:
 
 ```sh
-sudo ln -s /opt/heartbeat-logger/venv/bin/hblog /usr/local/bin/hblog
+echo "alias hblog='sudo -u hblog /opt/heartbeat-logger/venv/bin/hblog'" >> ~/.bashrc
+source ~/.bashrc
 hblog status
 ```
 
-Without the symlink, invoke it as `/opt/heartbeat-logger/venv/bin/hblog …`.
+With that alias in place, every `hblog …` example in this document works as
+written. Without it, invoke the CLI explicitly as
+`sudo -u hblog /opt/heartbeat-logger/venv/bin/hblog …`.
 
 ## Building from source
 
@@ -305,6 +313,13 @@ General shape:
 ```
 hblog [--db PATH | --config PATH] <command> [options]
 ```
+
+> **On the Pi, run the CLI as the `hblog` user.** The examples below are written as
+> bare `hblog …` commands and assume the alias set up during
+> [Installation](#installation) (`sudo -u hblog /opt/heartbeat-logger/venv/bin/hblog`).
+> Without the alias, prefix each command accordingly. This applies to every
+> subcommand — the read-only ones need it to reach the locked-down database, and
+> the maintenance ones need write access as the owning user.
 
 **Global options**
 
@@ -409,11 +424,12 @@ There are two distinct log locations by design: the services HeartBeat Logger
 logger's own diagnostics go to the journal and are viewed with
 `journalctl -u heartbeat-logger`.
 
-Force maintenance manually when needed:
+Force maintenance manually when needed (using the `hblog` alias from
+[Installation](#installation), or the full `sudo -u hblog …` form):
 
 ```sh
-sudo -u hblog /opt/heartbeat-logger/venv/bin/hblog prune
-sudo -u hblog /opt/heartbeat-logger/venv/bin/hblog vacuum
+hblog prune
+hblog vacuum
 ```
 
 ## Updating
@@ -512,7 +528,8 @@ own hardware if throughput is a concern.
 
 | Symptom | Cause and resolution |
 | --- | --- |
-| `hblog: command not found` | The CLI is not on your `PATH`. Run it via `/opt/heartbeat-logger/venv/bin/hblog …` or create the symlink from [Installation](#installation). |
+| `hblog: command not found` | The CLI lives in the project venv and is not on your `PATH`. Set up the alias from [Installation](#installation), or invoke it as `sudo -u hblog /opt/heartbeat-logger/venv/bin/hblog …`. |
+| `PermissionError: [Errno 13] … '/var/lib/heartbeat-logger/hblog.db'` | You ran the CLI as an ordinary user, but the data directory is restricted to the `hblog` user. Run it as `hblog` (via the alias or `sudo -u hblog …`); see [Installation](#installation). Adding your user to the `hblog` group is not sufficient — WAL requires directory write access. |
 | `error: database not found: …` | The daemon has not created the database yet, or you pointed at the wrong path. Confirm the service is running and that `--db`/`db_path` match. |
 | `status` shows `STATE = -` for everything | The unit monitor has not completed its first poll (wait `poll_interval_sec`), or it cannot run `systemctl`. Check `journalctl -u heartbeat-logger`. |
 | No logs are captured | Confirm `python3-systemd` is installed and the service account is in the `systemd-journal` group. `journalctl -u heartbeat-logger` reports `journal source unavailable …` when the binding is missing. |
