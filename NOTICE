@@ -1,0 +1,47 @@
+HeartBeat Logger
+================
+
+Copyright (c) 2026 Angad Singh Bains
+All rights reserved.
+
+License
+-------
+This software is distributed under the Angad Singh Personal & Non-Commercial
+Source Available License, Version 1.0. See the accompanying LICENSE file for the
+full terms and conditions.
+
+This software is SOURCE AVAILABLE. It is not "open source" as defined by the
+Open Source Initiative. Personal, educational, research, and other
+non-commercial use is permitted under the LICENSE; commercial use requires a
+separate written commercial license from the copyright holder.
+
+Description
+-----------
+HeartBeat Logger is a logging and health-monitoring service for systemd-managed
+services on a Raspberry Pi. It captures logs, detects crashes, failures, restart
+loops, and out-of-memory events, groups repeated problems into incidents, and
+stores everything in a compact local SQLite database with built-in retention. A
+command-line interface is provided to inspect service health, crashes, and logs.
+
+Trademarks
+----------
+"HeartBeat Logger" and the associated names, logos, and branding are marks of
+the copyright holder. All other product names, trademarks, and registered
+trademarks referenced in this software or its documentation are the property of
+their respective owners and are used for identification purposes only. Their use
+does not imply endorsement or affiliation.
+
+No Warranty
+-----------
+This software is provided "as is", without warranty of any kind, express or
+implied. To the maximum extent permitted by applicable law, the copyright holder
+disclaims all warranties and shall not be liable for any damages arising from
+the use of this software. See the LICENSE file for the complete warranty and
+liability disclaimers.
+
+Commercial Licensing
+--------------------
+Commercial licenses may be granted solely by the copyright holder. To request a
+commercial license or discuss commercial terms, contact:
+
+    singh4anga@gmail.com

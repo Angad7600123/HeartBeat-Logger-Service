@@ -4,13 +4,20 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "heartbeat-logger"
-version = "0.1.0"
+version = "1.0.0"
 description = "Full logging + health service for systemd services on a Raspberry Pi"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
-authors = [{ name = "HeartBeat Logger" }]
+license = { text = "Angad Singh Personal & Non-Commercial Source Available License" }
+authors = [{ name = "Angad Singh Bains" }]
 keywords = ["systemd", "journald", "logging", "monitoring", "raspberry-pi"]
+classifiers = [
+    "License :: Other/Proprietary License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: System :: Logging",
+    "Topic :: System :: Monitoring",
+]
 
 # Core has no third-party runtime deps (stdlib only) so it installs cleanly on a Pi
 # and stays testable off-device. The journald collector needs `systemd-python`,

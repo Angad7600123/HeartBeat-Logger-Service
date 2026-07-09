@@ -1,0 +1,271 @@
+Angad Singh Personal & Non-Commercial Source Available License
+Version 1.0
+
+Copyright (c) 2026 Angad Singh Bains
+All rights reserved.
+
+===============================================================================
+PREAMBLE
+===============================================================================
+
+This license governs the use of the software and associated documentation and
+materials contained in this repository (the "Software"). The Software is made
+available in source form so that individuals may read, study, learn from, and
+privately experiment with it.
+
+This license is a SOURCE AVAILABLE license. It is NOT an "open source" license
+as defined by the Open Source Initiative, and it is NOT a "free software"
+license as defined by the Free Software Foundation. The Software is provided
+under the specific and limited terms set out below. Any use not expressly
+permitted by this license is reserved to the copyright holder and requires prior
+written permission.
+
+By downloading, copying, viewing, executing, modifying, or otherwise using the
+Software, You agree to be bound by the terms of this license. If You do not
+agree to these terms, You may not use the Software.
+
+===============================================================================
+1. DEFINITIONS
+===============================================================================
+
+1.1. "Software" means the source code, object code, configuration, scripts,
+     documentation, and other materials distributed in this repository, together
+     with any portion thereof.
+
+1.2. "Copyright Holder" means Angad Singh Bains, the original author and owner of
+     the Software, and the holder of all rights not expressly granted herein.
+
+1.3. "You" or "Your" means the individual or legal entity exercising rights under
+     this license.
+
+1.4. "Personal Use" means use by a natural person for that person's own private
+     purposes, where such use is not undertaken for, and does not result in,
+     direct or indirect commercial advantage or monetary compensation.
+
+1.5. "Non-Commercial Use" means use that is not primarily intended for or
+     directed toward commercial advantage or monetary compensation, including
+     personal, educational, academic, research, and hobbyist use.
+
+1.6. "Commercial Use" means any use that is primarily intended for or directed
+     toward commercial advantage or monetary compensation, whether direct or
+     indirect. Commercial Use includes, without limitation, the activities
+     enumerated in Section 3.
+
+1.7. "Modification" means any addition to, deletion from, or change to the
+     substance or structure of the Software, including any derivative work.
+
+1.8. "Contribution" means any work of authorship that is intentionally submitted
+     to the Copyright Holder for inclusion in the Software. The terms applicable
+     to Contributions are set out in the CONTRIBUTING document accompanying the
+     Software.
+
+===============================================================================
+2. GRANT OF RIGHTS (PERMITTED USES)
+===============================================================================
+
+Subject to Your full and continuing compliance with this license, the Copyright
+Holder grants You a worldwide, royalty-free, non-exclusive, non-transferable,
+and revocable license to engage in the following Non-Commercial activities:
+
+2.1. Personal Use of the Software.
+
+2.2. Educational and academic use, including use in teaching and coursework.
+
+2.3. Research use, including experimentation and evaluation.
+
+2.4. Use in hobby and other non-commercial personal projects.
+
+2.5. Creation of private Modifications of the Software for Your own
+     Non-Commercial Use.
+
+2.6. Creation and maintenance of private forks of the Software for Your own
+     Non-Commercial Use.
+
+2.7. Viewing, reading, and studying the source code of the Software.
+
+2.8. Learning from the Software and the techniques it embodies.
+
+All rights granted in this Section are limited to Non-Commercial Use and are
+conditioned upon the retention of all copyright, attribution, and license
+notices as required by Section 4.
+
+===============================================================================
+3. RESTRICTIONS (PROHIBITED WITHOUT WRITTEN PERMISSION)
+===============================================================================
+
+The following activities are NOT permitted under this license and require the
+prior, express, written permission of the Copyright Holder. Without such
+permission, You may not:
+
+3.1.  Use the Software, in whole or in part, for any Commercial Use.
+
+3.2.  Sell, rent, lease, lend, or otherwise distribute the Software for a fee or
+      other consideration.
+
+3.3.  Sell or distribute modified versions of the Software.
+
+3.4.  Provide the Software, or any functionality derived from it, as a hosted or
+      managed service, including any "software as a service" (SaaS) offering.
+
+3.5.  Host, operate, or make the Software available to third parties as a paid
+      service.
+
+3.6.  Sell, distribute, or license any product, application, or service that
+      incorporates or is derived from the Software.
+
+3.7.  Bundle, combine, or distribute the Software together with any commercial
+      product or offering.
+
+3.8.  Sell, distribute, or supply any hardware, device, or appliance that
+      contains, embeds, or is preloaded with the Software.
+
+3.9.  Incorporate or deploy the Software in any commercial product, including
+      without limitation commercial unmanned aerial vehicles or drones,
+      commercial robotics, or other commercial embedded or autonomous systems.
+
+3.10. Offer consulting, integration, support, training, or professional services
+      based on the Software as part of a commercial package or engagement.
+
+3.11. Relicense, sublicense, or otherwise transfer rights in the Software beyond
+      the scope expressly granted by this license.
+
+3.12. Remove, obscure, alter, or fail to reproduce any copyright, attribution,
+      trademark, or license notice contained in the Software.
+
+3.13. Publish, distribute, or make the Software available under any license
+      other than this license.
+
+3.14. Use the name, logo, branding, or other identifying marks of the Software
+      or the Copyright Holder for any commercial purpose, or in any manner that
+      suggests endorsement or affiliation without written permission.
+
+For the avoidance of doubt, the enumeration above is illustrative and not
+exhaustive. Any use that is not expressly permitted under Section 2 is
+prohibited unless authorized in writing by the Copyright Holder.
+
+===============================================================================
+4. OWNERSHIP, COPYRIGHT, AND RESERVATION OF RIGHTS
+===============================================================================
+
+4.1. The Software is licensed, not sold. The Copyright Holder retains all right,
+     title, and interest in and to the Software, including all intellectual
+     property rights therein.
+
+4.2. Copyright in the Software at all times remains with the Copyright Holder.
+     No provision of this license transfers ownership of the Software to You.
+
+4.3. All rights not expressly granted to You under this license are reserved by
+     the Copyright Holder.
+
+4.4. You shall reproduce and retain all copyright, attribution, and license
+     notices in all copies and portions of the Software that You are permitted
+     to make.
+
+===============================================================================
+5. COMMERCIAL LICENSING
+===============================================================================
+
+5.1. No Commercial Use rights are granted by this license.
+
+5.2. Commercial licenses to the Software may be granted solely by the Copyright
+     Holder. Any Commercial Use requires a separate written commercial license
+     agreement executed with the Copyright Holder.
+
+5.3. Requests for a commercial license may be directed to the commercial
+     licensing contact identified in the NOTICE document accompanying the
+     Software.
+
+===============================================================================
+6. CONTRIBUTIONS
+===============================================================================
+
+6.1. Contributions submitted for inclusion in the Software are governed by the
+     terms set out in the CONTRIBUTING document accompanying the Software.
+
+6.2. Nothing in this Section or in any Contribution shall be construed to
+     diminish the ownership rights of the Copyright Holder described in
+     Section 4.
+
+===============================================================================
+7. TRADEMARKS
+===============================================================================
+
+This license does not grant permission to use the trade names, trademarks,
+service marks, product names, logos, or branding of the Copyright Holder or the
+Software, except as required for reasonable and customary attribution in
+reproductions of copyright and license notices.
+
+===============================================================================
+8. TERMINATION
+===============================================================================
+
+8.1. This license and the rights granted under it terminate automatically and
+     immediately, without notice, if You breach any term of this license.
+
+8.2. Upon termination, You must cease all use of the Software and destroy all
+     copies of the Software in Your possession or control, except that copies
+     retained solely for archival purposes may be kept where destruction is not
+     practicable, provided they are not used.
+
+8.3. Sections 3, 4, 7, 9, 10, and 11 survive termination.
+
+===============================================================================
+9. DISCLAIMER OF WARRANTY
+===============================================================================
+
+THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE", WITHOUT WARRANTY OF ANY
+KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE. TO THE MAXIMUM EXTENT
+PERMITTED BY APPLICABLE LAW, THE COPYRIGHT HOLDER EXPRESSLY DISCLAIMS ALL
+WARRANTIES AND CONDITIONS, INCLUDING WITHOUT LIMITATION ANY IMPLIED WARRANTIES
+OR CONDITIONS OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND
+NON-INFRINGEMENT. THE COPYRIGHT HOLDER DOES NOT WARRANT THAT THE SOFTWARE WILL
+MEET YOUR REQUIREMENTS, OPERATE WITHOUT INTERRUPTION, OR BE ERROR-FREE. YOU
+ASSUME THE ENTIRE RISK ARISING OUT OF YOUR USE OF THE SOFTWARE.
+
+===============================================================================
+10. LIMITATION OF LIABILITY
+===============================================================================
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, PUNITIVE, OR CONSEQUENTIAL DAMAGES, OR FOR ANY LOSS OF PROFITS,
+REVENUE, DATA, OR DATA USE, HOWEVER CAUSED AND UNDER ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE), ARISING
+IN ANY WAY OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OF OR INABILITY
+TO USE THE SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+===============================================================================
+11. GOVERNING PRINCIPLES AND JURISDICTION
+===============================================================================
+
+11.1. This license shall be interpreted in a jurisdiction-neutral manner and is
+      intended to be enforceable to the fullest extent permitted under the laws
+      applicable to the parties.
+
+11.2. This license does not designate a specific governing jurisdiction. Where a
+      governing law or forum is required for a particular matter, the parties may
+      agree to it in writing; absent such agreement, this license shall be given
+      effect according to its plain terms to the greatest extent permissible.
+
+===============================================================================
+12. SEVERABILITY
+===============================================================================
+
+If any provision of this license is held to be unenforceable or invalid under
+applicable law, that provision shall be modified to the minimum extent necessary
+to make it enforceable, or, if it cannot be so modified, severed from this
+license. The remaining provisions shall continue in full force and effect.
+
+===============================================================================
+13. ENTIRE AGREEMENT
+===============================================================================
+
+This license constitutes the entire agreement between You and the Copyright
+Holder concerning the Software and supersedes all prior or contemporaneous
+understandings regarding the same. This license may only be modified by a
+written instrument signed by the Copyright Holder.
+
+===============================================================================
+
+Copyright (c) 2026 Angad Singh Bains
+All rights reserved.
