@@ -211,9 +211,8 @@ best installed from the distribution rather than compiled from source.
 sudo apt install python3-systemd
 sudo useradd --system --no-create-home --shell /usr/sbin/nologin hblog
 
-# 2. Install the code
-sudo mkdir -p /opt/heartbeat-logger
-sudo cp -r . /opt/heartbeat-logger
+# 2. Clone the code
+sudo git clone https://github.com/Angad7600123/HeartBeat-Logger-Service.git /opt/heartbeat-logger
 cd /opt/heartbeat-logger
 
 # 3. venv that can see the apt-installed systemd binding
@@ -423,7 +422,7 @@ sudo -u hblog /opt/heartbeat-logger/venv/bin/hblog vacuum
 
 ```sh
 cd /opt/heartbeat-logger
-sudo cp -r /path/to/new/code/* .          # or: sudo git pull, for a checkout
+sudo git pull
 sudo ./venv/bin/pip install --upgrade .
 # If the unit file changed:
 sudo cp systemd/heartbeat-logger.service /etc/systemd/system/
