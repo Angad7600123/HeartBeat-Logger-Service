@@ -92,7 +92,7 @@ sudo git clone https://github.com/Angad7600123/HeartBeat-Logger-Service.git /opt
 cd /opt/heartbeat-logger
 
 # 3. venv that can see the apt-installed systemd binding
-python3 -m venv --system-site-packages venv
+sudo python3 -m venv --system-site-packages venv
 sudo ./venv/bin/pip install .
 
 # 4. Config
