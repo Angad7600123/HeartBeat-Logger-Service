@@ -88,7 +88,7 @@ sudo useradd --system --no-create-home --shell /usr/sbin/nologin hblog
 
 # 2. Code
 sudo mkdir -p /opt/heartbeat-logger
-sudo cp -r . /opt/heartbeat-logger
+sudo git clone https://github.com/Angad7600123/HeartBeat-Logger-Service.git /opt/heartbeat-logger
 cd /opt/heartbeat-logger
 
 # 3. venv that can see the apt-installed systemd binding
