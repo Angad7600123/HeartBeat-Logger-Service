@@ -6,9 +6,10 @@
 db_path = "/var/lib/heartbeat-logger/hblog.db"
 
 # --- which units to watch --------------------------------------------------
-# watch_units: empty = watch every service seen. Entries may end with '*' to
-#   match a prefix, e.g. "myapp*".
-# exclude_units: always applied, even when watch_units is empty.
+# watch_units: empty = watch every service seen. Run `sudo hblog scan` to fill
+#   this with every service on the Pi, then delete the ones you don't want.
+#   Entries may end with '*' to match a prefix, e.g. "myapp*".
+# exclude_units: always applied, even when a unit is listed in watch_units.
 watch_units = []
 exclude_units = [
     "systemd-*",

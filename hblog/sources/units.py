@@ -85,6 +85,13 @@ def parse_list(output: str) -> list[str]:
     return units
 
 
+def discover_services(list_runner=_run_list) -> list[str]:
+    """Every systemd .service unit currently known to the system (including
+    running template instances such as `wifibroadcast@drone.service`), sorted and
+    de-duplicated. Used by `hblog scan` to populate the config's watch list."""
+    return sorted(set(parse_list(list_runner())))
+
+
 def _int(v: str | None) -> int | None:
     try:
         return int(v)

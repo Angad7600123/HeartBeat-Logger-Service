@@ -86,6 +86,17 @@ def resolve_db_path(args) -> str:
     return resolve_config(args).db_path
 
 
+def resolve_config_path(args) -> str:
+    """The path `scan` writes to: explicit --config, else the first default that
+    exists, else the canonical /etc location."""
+    if getattr(args, "config", None):
+        return args.config
+    for p in DEFAULT_CONFIG_PATHS:
+        if p and Path(p).exists():
+            return p
+    return "/etc/heartbeat-logger/config.toml"
+
+
 # --------------------------------------------------------------------------
 # commands
 # --------------------------------------------------------------------------
@@ -224,6 +235,48 @@ def cmd_vacuum(args) -> int:
     return 0
 
 
+def cmd_scan(args) -> int:
+    """Discover all services on the system and write them into the config's
+    watch_units list, so the user can prune the ones they don't want tracked."""
+    from .config import Config, load, write_watch_units
+    from .sources.units import discover_services
+
+    path = resolve_config_path(args)
+
+    # Apply the existing exclude_units (or the defaults) so obvious noise
+    # (systemd-*, etc.) isn't dumped into the list. watch_units itself is ignored
+    # here — scan always writes the full current service set.
+    try:
+        excludes = load(path).exclude_units if Path(path).exists() else Config().exclude_units
+    except Exception:
+        excludes = Config().exclude_units
+    exclude_filter = Config(exclude_units=excludes)
+
+    try:
+        discovered = discover_services()
+    except FileNotFoundError:
+        raise SystemExit("`scan` must be run on the Pi (systemctl was not found)")
+
+    services = [s for s in discovered if exclude_filter.unit_is_watched(s)]
+    if not services:
+        raise SystemExit("no services discovered (is this a systemd system?)")
+
+    try:
+        cfg_path, created = write_watch_units(path, services)
+    except PermissionError:
+        raise SystemExit(
+            f"permission denied writing {path}\n"
+            "scan writes the system config, so run it as root, e.g.:\n"
+            "  sudo /opt/heartbeat-logger/venv/bin/hblog scan"
+        )
+
+    verb = "Created" if created else "Updated"
+    print(f"{verb} {cfg_path}: wrote {len(services)} services to watch_units.")
+    print("Edit that file to remove any services you don't want tracked, then apply:")
+    print("  sudo systemctl restart heartbeat-logger")
+    return 0
+
+
 def cmd_demo(args) -> int:
     """Populate a DB with synthetic events (no Pi needed) to try the CLI."""
     from .pipeline import Pipeline
@@ -290,6 +343,12 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("stats", help="error counts per service")
     s.add_argument("--since", help="e.g. 24h, 7d")
     s.set_defaults(func=cmd_stats)
+
+    s = sub.add_parser(
+        "scan",
+        help="discover all services and write them to watch_units in the config",
+    )
+    s.set_defaults(func=cmd_scan)
 
     s = sub.add_parser("prune", help="apply retention (age + size cap)")
     s.set_defaults(func=cmd_prune)

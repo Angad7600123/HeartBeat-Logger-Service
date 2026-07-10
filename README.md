@@ -222,14 +222,22 @@ sudo ./venv/bin/pip install .
 # 4. Configuration
 sudo mkdir -p /etc/heartbeat-logger
 sudo cp config/config.example.toml /etc/heartbeat-logger/config.toml
-sudo nano /etc/heartbeat-logger/config.toml     # tune retention / watched units
+sudo nano /etc/heartbeat-logger/config.toml     # tune retention / thresholds
 
-# 5. Install and enable the service
+# 5. Populate the watch list with the services on this Pi, then prune it
+sudo ./venv/bin/hblog scan                       # writes every service into watch_units
+sudo nano /etc/heartbeat-logger/config.toml     # delete services you don't want tracked
+
+# 6. Install and enable the service
 sudo cp systemd/heartbeat-logger.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now heartbeat-logger
 systemctl status heartbeat-logger
 ```
+
+Step 5 is optional — with an empty `watch_units` the daemon tracks every service.
+Run `hblog scan` when you'd rather curate an explicit list; see
+[Choosing which services to track](#choosing-which-services-to-track).
 
 **Make the CLI convenient to run.** The service locks its data directory down to
 the `hblog` user (`/var/lib/heartbeat-logger` is mode `0750`), so the database can
@@ -345,6 +353,7 @@ integer plus a unit: `s`, `m`, `h`, or `d` (for example `30m`, `24h`, `7d`).
 | `incidents` | Grouped, deduplicated problems. | `--unit`, `--open`, `--limit` |
 | `logs` | Search or follow stored log lines. | `--unit`, `--since`, `--priority`, `--grep`, `--limit`, `-f/--follow` |
 | `stats` | Error counts per service over a window. | `--since` |
+| `scan` | Discover all services and write them to `watch_units` in the config. | `--config` |
 | `prune` | Apply retention now (age + size cap). | — |
 | `vacuum` | Reclaim space with a full vacuum. | — |
 | `demo` | Insert a synthetic event stream (no Pi needed). | — |
@@ -357,8 +366,11 @@ Notes:
 - `--grep` is a substring match on the message (case-insensitive for ASCII, per
   SQLite `LIKE`).
 - `prune`, `vacuum` and `demo` write to the database and must run as a user that
-  can write it (the `hblog` user or root on the Pi). All other commands are
+  can write it (the `hblog` user or root on the Pi). All other query commands are
   read-only and safe to run while the daemon is writing.
+- `scan` writes the **config file** (in `/etc`), so it must be run with `sudo`
+  (as root) — not via the `hblog` alias. See [Choosing which services to
+  track](#choosing-which-services-to-track).
 
 Examples:
 
@@ -380,8 +392,8 @@ and falls back to the default shown below. The annotated template is
 | Key | Default | Controls |
 | --- | --- | --- |
 | `db_path` | `/var/lib/heartbeat-logger/hblog.db` | Location of the SQLite database. |
-| `watch_units` | `[]` (all) | Units to watch; empty means every service. Entries may end with `*` for a prefix match. |
-| `exclude_units` | a few `systemd-*` | Always excluded, even when `watch_units` is empty. |
+| `watch_units` | `[]` (all) | Explicit list of services to track. Empty means every service; populate it with [`hblog scan`](#choosing-which-services-to-track). Entries may end with `*` for a prefix match. |
+| `exclude_units` | a few `systemd-*` | Always excluded, even when a unit is in `watch_units`. |
 | `poll_interval_sec` | `15` | How often the unit-state monitor polls. |
 | `batch_size` | `200` | Flush after this many buffered events. |
 | `flush_interval_sec` | `5` | Flush at least this often when idle. |
@@ -403,6 +415,90 @@ sudo systemctl restart heartbeat-logger
 
 The watchdog *timeout* is set in the unit file (`WatchdogSec=60`); change it there
 and run `sudo systemctl daemon-reload && sudo systemctl restart heartbeat-logger`.
+
+### Choosing which services to track
+
+By default (`watch_units = []`) HeartBeat Logger tracks **every** service on the
+system. That is the simplest setup, but on a busy device you usually want an
+explicit, curated list — both to cut noise and to make it obvious at a glance
+which services are being watched. The `hblog scan` command exists for exactly
+this: it discovers every service on the Pi and writes them into `watch_units`, so
+that curating the list becomes a matter of **deleting the ones you don't want**
+rather than typing dozens of unit names by hand.
+
+The intended workflow is deliberately a three-step, human-in-the-loop process:
+
+```sh
+sudo /opt/heartbeat-logger/venv/bin/hblog scan   # 1. populate watch_units with all services
+sudo nano /etc/heartbeat-logger/config.toml      # 2. delete the services you don't want tracked
+sudo systemctl restart heartbeat-logger          # 3. apply the change
+```
+
+After step 1 your config's `watch_units` looks like this, ready to be pruned:
+
+```toml
+watch_units = [
+    "NetworkManager.service",
+    "drone-video.service",
+    "ssh.service",
+    "wifibroadcast@drone.service",
+    # ...every other service on the Pi...
+]
+```
+
+#### What `scan` does, exactly
+
+- **It discovers every systemd service on the machine**, including running
+  template instances such as `wifibroadcast@drone.service` — not just static unit
+  files. The list is sorted and de-duplicated.
+- **It applies your `exclude_units` patterns while scanning**, so obvious noise
+  (`systemd-*`, `user@*`, `session-*`, and anything else you've excluded) is never
+  added to the list in the first place. You still end up with a clean starting
+  point rather than a hundred internal units.
+- **It rewrites only the `watch_units` array.** Every other setting, and every
+  comment in the file, is preserved exactly — `scan` performs a surgical
+  in-place replacement of just that one array, not a regeneration of the file. If
+  the config file doesn't exist yet, `scan` creates it from the built-in template
+  with `watch_units` already filled in.
+
+#### The single-writer guarantee
+
+This is the important part of the design:
+
+- **`hblog scan` is the only thing that ever writes the config file.** The daemon
+  (`hblogd`) only ever *reads* it — there is no code path anywhere in the service
+  that modifies the configuration. It will never silently add, remove, or
+  "helpfully" re-add a service behind your back.
+- Consequently, **once you have pruned the list, it stays exactly as you left
+  it.** Nothing changes `watch_units` until *you* deliberately run `scan` again
+  (or edit the file yourself). New services installed on the Pi later are **not**
+  auto-added; they are simply not tracked until you choose to re-scan.
+- This makes the config the single source of truth that you own. `scan` and your
+  own editor are the only writers; the running service is strictly a reader.
+
+#### Permissions
+
+- **`scan` writes the config file in `/etc`, so it must be run as root** (with
+  `sudo`) — *not* through the read-only `hblog` alias, which runs as the
+  unprivileged `hblog` user and cannot write there. If you run it without
+  sufficient permission, `scan` stops with a clear message telling you to re-run
+  it with `sudo`.
+- This is the one command that is run as root rather than as the `hblog` user;
+  every other CLI command reads the database and runs via the alias (see
+  [Running](#running)).
+
+#### Re-scanning and adding single services
+
+- **Re-running `scan` rewrites `watch_units` with the full current service set**,
+  which means any manual pruning you did is replaced. This is intentional: a
+  re-scan is how you pick up services that were installed after your last scan.
+- If you only want to **add one newly installed service** without losing your
+  pruned list, don't re-scan — just add its line to `watch_units` by hand and
+  restart the service.
+- To make a service stay excluded even across future re-scans, add it (or a
+  matching `*` pattern) to `exclude_units` instead of only deleting it from
+  `watch_units`; `exclude_units` is always honoured and `scan` never adds an
+  excluded unit.
 
 ## Administration
 
