@@ -31,6 +31,29 @@ def test_cli_status(tmp_path, capsys):
     assert "myapp.service" in out
 
 
+def test_cli_status_respects_watch_units(tmp_path, capsys):
+    from hblog.db import Database
+    from hblog.models import ServiceStatus
+
+    p = tmp_path / "h.db"
+    now = time.time()
+    db = Database(p)
+    db.upsert_service_status(ServiceStatus("a.service", state="active",
+                                           last_heartbeat=now, updated_at=now))
+    db.upsert_service_status(ServiceStatus("b.service", state="active",
+                                           last_heartbeat=now, updated_at=now))
+    db.close()
+
+    cfg = tmp_path / "config.toml"
+    cfg.write_text('watch_units = ["a.service"]\n', encoding="utf-8")
+
+    rc = main(["--db", str(p), "--config", str(cfg), "status"])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "a.service" in out
+    assert "b.service" not in out       # pruned unit no longer shown
+
+
 def test_cli_crashes(tmp_path, capsys):
     db = seed(tmp_path)
     rc = main(["--db", db, "crashes"])

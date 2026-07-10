@@ -111,6 +111,21 @@ def test_service_status_upsert(tmp_path):
     db.close()
 
 
+def test_prune_service_status(tmp_path):
+    db = Database(tmp_path / "h.db")
+    now = time.time()
+    for u in ("a.service", "b.service", "c.service"):
+        db.upsert_service_status(ServiceStatus(u, state="active", updated_at=now))
+    removed = db.prune_service_status(["a.service", "c.service"])
+    assert removed == 1
+    remaining = {r["unit"] for r in db.service_statuses()}
+    assert remaining == {"a.service", "c.service"}
+    # empty keep list = "watch all" => prunes nothing
+    assert db.prune_service_status([]) == 0
+    assert len(db.service_statuses()) == 2
+    db.close()
+
+
 def test_readonly_refuses_missing(tmp_path):
     with pytest.raises(FileNotFoundError):
         Database(tmp_path / "nope.db", read_only=True)

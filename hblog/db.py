@@ -194,6 +194,20 @@ class Database:
         )
         self.conn.commit()
 
+    def prune_service_status(self, keep_units: list[str]) -> int:
+        """Delete service_status rows for units no longer being watched, so a
+        pruned watch list drops stale services. An empty keep list is treated as
+        'watch everything' and prunes nothing."""
+        if not keep_units:
+            return 0
+        placeholders = ",".join("?" for _ in keep_units)
+        cur = self.conn.execute(
+            f"DELETE FROM service_status WHERE unit NOT IN ({placeholders})",
+            tuple(keep_units),
+        )
+        self.conn.commit()
+        return cur.rowcount
+
     def resolve_incidents_for_unit(self, unit: str, kinds: tuple[str, ...]) -> None:
         """Mark open incidents of the given kinds resolved (e.g. when a unit is
         healthy again). Keeps history but drops them from the 'open' view."""

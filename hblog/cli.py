@@ -107,6 +107,9 @@ def cmd_status(args) -> int:
     since = time.time() - 86400
     statuses = {r["unit"]: r for r in db.service_statuses()}
     units = sorted(set(statuses) | set(db.distinct_units()))
+    # Only show currently-watched services. Pruning watch_units leaves stale rows
+    # in the DB; honor the live config so status reflects what is actually tracked.
+    units = [u for u in units if cfg.unit_is_watched(u)]
     rows = []
     for unit in units:
         st = statuses.get(unit)

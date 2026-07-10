@@ -55,6 +55,7 @@ class Daemon:
         self._notifier = _Notifier(enabled=config.watchdog)
         self._last_poll = 0.0
         self._last_maint = time.monotonic()
+        self._watched: set[str] | None = None  # last watched set, for status cleanup
 
     # -- lifecycle -----------------------------------------------------------
 
@@ -148,6 +149,12 @@ class Daemon:
             return
         for s in statuses:
             self.db.upsert_service_status(s)
+        # When the watched set changes (e.g. after the user prunes watch_units and
+        # restarts), drop service_status rows for units we no longer watch.
+        watched = {s.unit for s in statuses}
+        if watched and watched != self._watched:
+            self.db.prune_service_status(list(watched))
+            self._watched = watched
         for ev in events:
             if ev.extra.get("recovery"):
                 self.db.resolve_incidents_for_unit(ev.unit, _RESOLVE_KINDS)
