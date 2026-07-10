@@ -62,7 +62,16 @@ class Daemon:
         log.info("hblogd %s starting (db=%s)", __version__, self.config.db_path)
         self._install_signals()
 
-        jt = threading.Thread(target=self._journal_worker, name="journal", daemon=True)
+        # Read the persisted cursor here, on the main thread. The SQLite
+        # connection is single-threaded (check_same_thread), so the journal
+        # worker must never touch self.db — it resumes from this cursor and
+        # tracks its own progress across reconnects. Cursor persistence happens
+        # back on the main thread via the pipeline flush.
+        initial_cursor = self.db.get_meta("journal_cursor")
+        jt = threading.Thread(
+            target=self._journal_worker, args=(initial_cursor,),
+            name="journal", daemon=True,
+        )
         jt.start()
 
         self._notifier.ready()
@@ -91,19 +100,23 @@ class Daemon:
 
     # -- journal -------------------------------------------------------------
 
-    def _journal_worker(self) -> None:
+    def _journal_worker(self, cursor: str | None) -> None:
         try:
             from .sources.journal import JournalSource
         except Exception as e:  # pragma: no cover - Pi-only path
             log.warning("journal source unavailable (%s); running monitor-only", e)
             return
+        log.info("journal reader started (%s)", "resuming" if cursor else "from tail")
         while not self._stop.is_set():
             try:
-                src = JournalSource(cursor=self.db.get_meta("journal_cursor"))
+                src = JournalSource(cursor=cursor)
                 for ev in src.events():
                     if self._stop.is_set():
                         break
                     self._q.put(ev)
+                    # Remember progress locally so a reconnect resumes cleanly
+                    # without re-reading from the tail (no DB access from here).
+                    cursor = ev.extra.get("cursor", cursor)
             except Exception:  # pragma: no cover - Pi-only path
                 log.exception("journal reader crashed; retrying in 5s")
                 self._stop.wait(5)
